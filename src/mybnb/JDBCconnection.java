@@ -22,50 +22,55 @@ public class JDBCconnection {
 			
 			System.out.println("Creating table in given database...");
 		      stmt = conn.createStatement();
-		      String sql = "CREATE TABLE LOGIN " +
-	    		  	   "(username VARCHAR(255) not null, " +
-	    		       " password VARCHAR(255) not null, " +
-	    		  	   " PRIMARY KEY (username))";
+		      
+		      String sql = "CREATE TABLE USERS " +
+	                   "(occupation VARCHAR(255), " + 
+	                   " address VARCHAR(255), " + 
+	                   " name VARCHAR(255), " +
+	                   " sin INT not null, " +
+	                   " username VARCHAR(255), " +
+	                   " password VARCHAR(255), " +
+	                   " credit_card_number INT not null, " +
+	                   " UNIQUE ( username ), " +
+	                   " PRIMARY KEY ( sin ))";
 		      stmt.executeUpdate(sql);
 		      
-		      sql = "CREATE TABLE USERS " +
-		                   "(occupation VARCHAR(255), " + 
-		                   " address VARCHAR(255), " + 
-		                   " name VARCHAR(255), " +
-		                   " sin INT not null, " +
-		                   " PRIMARY KEY ( sin ))"; 
-
+		      sql = "CREATE TABLE LOGIN " +
+	    		  	   "(SELECT username, password FROM USERS)";
 		      stmt.executeUpdate(sql);
-
+		     
 		      sql = "CREATE TABLE RENTERS " + 
-	                   " (credit_card_number INT not null AUTO_INCREMENT, " +
-	                   " PRIMARY KEY ( credit_card_number ))" +
-	                   " SELECT * FROM USERS ";
+	                   " (SELECT * FROM USERS " +
+	                   ")";
 		      stmt.executeUpdate(sql);
-
+			
 		      sql = "CREATE TABLE HOSTS " +
 		    		  " SELECT * FROM USERS";
 		      stmt.executeUpdate(sql);
 		      
 		      sql = "CREATE TABLE LISTINGS " +
 	                   "(type VARCHAR(255), " + 
-	                   " location INT not null, " +
-	                   " address VARCHAR(255), " +
+	                   " latitude INT not null, " +
+	                   " longitude INT not null, " +
+	                   " listing_address VARCHAR(255), " +
+	                   " postal_code VARCHAR(255), " +
 	                   " amenities VARCHAR(255), " +
-	                   " PRIMARY KEY ( location ))";
+	                   " rental_price INT not null, " +
+	                   " PRIMARY KEY ( latitude, longitude ))";
 		      stmt.executeUpdate(sql);
 		      
 		      sql = "CREATE TABLE LISTINGS_LISTED " +
-		    		  " SELECT address FROM LISTINGS";
+		    		  " SELECT * FROM LISTINGS, HOSTS";
 		      stmt.executeUpdate(sql);
 		      
-		      sql = "CREATE TABLE LISTINGS_RENTED " +
-		    		  " SELECT address FROM LISTINGS";
+		      sql = "CREATE TABLE LISTNGS_RENTED " +
+		    		  " SELECT * FROM LISTINGS, RENTERS";
 		      stmt.executeUpdate(sql);
 		      
 		      sql = "CREATE TABLE CALENDAR " +
-		    		  "(rental_price INT, " +
-		    		  " days_available VARCHAR(255))";
+		    		  "(" +
+		    		  " days_available INT)" +
+		    		  " SELECT * FROM LISTINGS";
 		      stmt.executeUpdate(sql);
 		      
 		      System.out.println("Created tables in given database...");
