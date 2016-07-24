@@ -144,7 +144,7 @@ public class queries {
 			try {
 				stmt = conn.createStatement();
 			    String sql = "SELECT * FROM LISTINGS " +
-			                   "WHERE (postal_code = " + postal_code + ")";
+			                   "WHERE (postal_code = '" + postal_code + "')";
 			    ResultSet rs = stmt.executeQuery(sql);
 			    while(rs.next()){
 			    	String type = rs.getString("type");
@@ -204,7 +204,7 @@ public class queries {
 			try {
 				stmt = conn.createStatement();
 			    String sql = "SELECT * FROM LISTINGS " +
-			                   "WHERE (listing_address = " + address + ")";
+			                   "WHERE (listing_address = '" + address + "')";
 			    ResultSet rs = stmt.executeQuery(sql);
 			    while(rs.next()){
 			    	String type = rs.getString("type");
