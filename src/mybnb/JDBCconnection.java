@@ -1,4 +1,4 @@
-package myBNB;
+package mybnb;
 
 import java.sql.*;
 
@@ -10,7 +10,7 @@ public class JDBCconnection {
 	public static void main(String[] args) throws ClassNotFoundException {
 		Class.forName(dbClassName);
 		final String USER = "root";
-		final String PASS = "vethush";
+		final String PASS = "password";
 		System.out.println("Connecting to database...");
 		
 		Connection conn = null;
@@ -50,12 +50,12 @@ public class JDBCconnection {
 		      
 		      sql = "CREATE TABLE LISTINGS " +
 	                   "(type VARCHAR(255), " + 
-	                   " latitude INT not null, " +
-	                   " longitude INT not null, " +
+	                   " latitude FLOAT not null, " +
+	                   " longitude FLOAT not null, " +
 	                   " listing_address VARCHAR(255), " +
 	                   " postal_code VARCHAR(255), " +
 	                   " amenities VARCHAR(255), " +
-	                   " rental_price INT not null, " +
+	                   " rental_price DOUBLE not null, " +
 	                   " PRIMARY KEY ( latitude, longitude ))";
 		      stmt.executeUpdate(sql);
 		      

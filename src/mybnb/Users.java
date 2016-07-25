@@ -1,4 +1,4 @@
-package myBNB;
+package mybnb;
 
 public class Users {
 	String occupation;
@@ -7,7 +7,7 @@ public class Users {
 	int sin;
 	String username;
 	String password;
-	int credit_card_number;
+	float credit_card_number;
 	
 	public String getOccupation() {
 		return occupation;
@@ -57,12 +57,12 @@ public class Users {
 		this.password = password;
 	}
 
-	public int getCredit_card_number() {
+	public float getCredit_card_number() {
 		return credit_card_number;
 	}
 
-	public void setCredit_card_number(int credit_card_number) {
-		this.credit_card_number = credit_card_number;
+	public void setCredit_card_number(float credit_card_number2) {
+		this.credit_card_number = credit_card_number2;
 	}
 
 	public Users() {

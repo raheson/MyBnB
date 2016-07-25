@@ -1,20 +1,20 @@
-package myBNB;
+package mybnb;
 
 public class Listings {
 	String type;
-	int latitude;
-	int longitude;
+	double latitude;
+	double longitude;
 	String listing_address;
 	String amenities;
-	int rental_price;
+	double rental_price;
 	String postal_code;
 	
-	public int getRental_price() {
+	public double getRental_price() {
 		return rental_price;
 	}
 
-	public void setRental_price(int rental_price) {
-		this.rental_price = rental_price;
+	public void setRental_price(double rental_price2) {
+		this.rental_price = rental_price2;
 	}
 
 	public String getPostal_code() {
@@ -33,19 +33,19 @@ public class Listings {
 		this.type = type;
 	}
 
-	public int getLatitude() {
+	public double getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(int latitude) {
-		this.latitude = latitude;
+	public void setLatitude(double latitude2) {
+		this.latitude = latitude2;
 	}
 
-	public int getLongitude() {
+	public double getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(int longitude) {
+	public void setLongitude(double longitude) {
 		this.longitude = longitude;
 	}
 

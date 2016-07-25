@@ -1,4 +1,4 @@
-package myBNB;
+package mybnb;
 
 public class Renters {
 	int credit_card_number;
