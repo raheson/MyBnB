@@ -110,6 +110,5 @@ public class JDBCconnection {
 		         se.printStackTrace();
 		      }
 		   }
-		   System.out.println("Goodbye!");
 	}
 }

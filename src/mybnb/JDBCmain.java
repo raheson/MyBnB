@@ -14,6 +14,11 @@ public class JDBCmain {
 	private static final String CONNECTION = "jdbc:mysql://localhost/mybnb";
 
 	public static void main(String[] args) throws ClassNotFoundException{
+		JDBCconnection newConnection = new JDBCconnection();
+		String[] arguments = new String[]{"123"};
+		newConnection.main(arguments);
+		
+
 		//User Interface
 		System.out.println("");
 		System.out.println("			*****************************************************			");
@@ -140,6 +145,14 @@ public class JDBCmain {
 				System.out.print("To create a listing, please start off by entering your sin (9 digits): ");
 				int hsin = reader.nextInt();
 				createListing(hsin);
+				System.out.println("To verify, please enter the following: ");
+				System.out.print("SIN: ");
+				int listsin = reader.nextInt();
+				System.out.print("Latitude: ");
+				Float listlat = reader.nextFloat();
+				System.out.print("Longitude: ");
+				Float listlong = reader.nextFloat();
+				listingListed(listlat, listlong, listsin);
 
 			}
 			else if (h == 6){
@@ -176,54 +189,49 @@ public class JDBCmain {
 			System.out.println("NOT IMPLEMENTED");
 		}
 		else if (reportOp.equals("b")){
-			System.out.println("Postal code: ");
-			String postalcode = reader.next();
-			System.out.println("City: ");
-			String city = reader.next();
-			reportB(postalcode, city);
+			reportB();
+			userInterface(10);
 		}
 		else if (reportOp.equals("c")){
-			System.out.println("Country: ");
-			String country = reader.next();
-			reportC(country);
+			reportC();
+			userInterface(10);
 		}
 		else if (reportOp.equals("d")){
-			System.out.println("Country: ");
-			String country = reader.next();
-			System.out.println("City: ");
-			String city = reader.next();
-			reportD(country, city);
+			reportD();
+			userInterface(10);
 		}
 		else if (reportOp.equals("e")){
-			System.out.println("Country: ");
-			String country = reader.next();
-			System.out.println("City: ");
-			String city = reader.next();
-			System.out.println("Postal Code: ");
-			String postal = reader.next();
-			reportE(country, city, postal);
+			reportE();
+			userInterface(10);
 
 		}
 		else if (reportOp.equals("f")){
-			System.out.println("NOT IMPLEMENTED");
+			reportF();
+			userInterface(10);
 		}
 		else if (reportOp.equals("g")){
 			System.out.println("NOT IMPLEMENTED");
+			userInterface(10);
 		}	
 		else if (reportOp.equals("h")){
 			System.out.println("NOT IMPLEMENTED");
+			userInterface(10);
 		}
 		else if (reportOp.equals("i")){
 			System.out.println("NOT IMPLEMENTED");
+			userInterface(10);
 		}
 		else if (reportOp.equals("j")){
 			System.out.println("NOT IMPLEMENTED");
+			userInterface(10);
 		}
 		else if (reportOp.equals("k")){
 			System.out.println("NOT IMPLEMENTED");
+			userInterface(10);
 		}
 		else if (reportOp.equals("l")){
 			System.out.println("NOT IMPLEMENTED");
+			userInterface(10);
 		}
 	}
 
@@ -233,7 +241,7 @@ public class JDBCmain {
 		String username = reader.next();
 		System.out.println("Let's start booking!");
 		System.out.println("Search Filters, choose the following to search by: ");
-		System.out.println("(1)Location (2)Price (3)Postal Code (4)Address");
+		System.out.println("(1)Location (2)Price (3)Postal Code (4)Address (5)Exit");
 		int s = reader.nextInt();
 
 		if (s == 1){
@@ -258,9 +266,12 @@ public class JDBCmain {
 			String addr = reader.next();
 			searchbyAddress(addr, username, who);
 		}
+		else if(s == 5){
+			userInterface(10);
+		}
 		else {
 			System.out.println("Please try again.");
-			userInterface(10);
+			search(who);
 		}
 	}
 
@@ -552,10 +563,6 @@ public class JDBCmain {
 						listing.getListing_city() + "' , '" + listing.getListing_country() + "' , '" +
 						listing.getPostal_code() + "' , '" + listing.getAmenities() + "' ," + listing.getRental_price() + ")";
 				stmt.executeUpdate(sql);
-				sql = "INSERT INTO LISTINGS_LISTED SELECT * FROM USERS, LISTINGS " +
-						"WHERE (latitude = " + listing.getLatitude() + ") AND (longitude = " + listing.getLatitude() + ") AND (sin = " +
-						sin + ")";
-				stmt.executeUpdate(sql);
 				System.out.println("Inserted records into the table...");
 
 			} catch (NumberFormatException e) {
@@ -586,6 +593,49 @@ public class JDBCmain {
 		int hcexit = reader.nextInt();
 		userInterface(hcexit);
 		return null;
+
+	}
+
+	public static void listingListed(float latitude, float longitude, int sin) throws ClassNotFoundException{
+		Class.forName(dbClassName);
+		final String USER = "root";
+		final String PASS = "password";
+		System.out.println("Connecting to database...");
+
+		Connection conn = null;
+		Statement stmt = null;
+
+		try {
+			conn = DriverManager.getConnection(CONNECTION,USER,PASS);
+			System.out.println("Successfully connected to MySQL!");
+
+			try {
+				stmt = conn.createStatement();
+				String sql = "INSERT INTO LISTNGS_LISTED SELECT * FROM LISTINGS, HOSTS " +
+						"WHERE (latitude = " + latitude + ") AND (longitude = " + longitude + ")";
+				stmt.executeUpdate(sql);
+
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}       
+
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try{
+				if(stmt!=null)
+					conn.close();
+			}catch(SQLException se){
+			}
+			try{
+				if(conn!=null)
+					conn.close();
+			}catch(SQLException se){
+				se.printStackTrace();
+			}
+		}
 	}
 
 	public static void deleteListing(float latitude, float longitude) throws ClassNotFoundException{
@@ -657,7 +707,7 @@ public class JDBCmain {
 
 			try {
 				stmt = conn.createStatement();
-				String sql = "INSERT INTO LISTNGS_RENTED SELECT * FROM USERS, LISTINGS " +
+				String sql = "INSERT INTO LISTNGS_RENTED SELECT * FROM LISTINGS, USERS " +
 						"WHERE (latitude = " + latitude + ") AND (longitude = " + longitude + ")";
 				stmt.executeUpdate(sql);
 
@@ -1030,7 +1080,7 @@ public class JDBCmain {
 			try {
 				stmt = conn.createStatement();
 				String sql = "SELECT * FROM LISTINGS " +
-						"WHERE (listing_address = '" + address + "')";
+						"WHERE (listing_address = '" + address + "' LIKE '% %')";
 				ResultSet rs = stmt.executeQuery(sql);
 				while(rs.next()){
 					String type = rs.getString("type");
@@ -1056,21 +1106,29 @@ public class JDBCmain {
 					System.out.println("");
 					count ++;
 				}
-				rs.close();
-				System.out.println("");
-				System.out.println("Alright! Take a close look  and indicate the location(latitude, longitude) of the place you want to rent!");
-				System.out.print("Latitude: ");
-				float lat = reader.nextFloat();
-				System.out.print("Longitude: ");
-				float longt = reader.nextFloat();
-				System.out.println("Do you still want to rent this one? (Y/N)");
-				String exitstat = reader.next();
-				if (exitstat.equals("Y")){
-					bookListing(username, lat, longt, who);
+				if (rs.next()){
+					System.out.println("");
+					System.out.println("Alright! Take a close look  and indicate the location(latitude, longitude) of the place you want to rent!");
+					System.out.print("Latitude: ");
+					float lat = reader.nextFloat();
+					System.out.print("Longitude: ");
+					float longt = reader.nextFloat();
+					System.out.println("Do you still want to rent this one? (Y/N)");
+					String exitstat = reader.next();
+					if (exitstat.equals("Y")){
+						bookListing(username, lat, longt, who);
+					}
+					else{
+						search(who);
+					}
 				}
 				else{
-					search(who);
+					System.out.println("Sorry, we found no matches");
+					userInterface(10);
 				}
+				rs.close();
+
+
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}       
@@ -1093,7 +1151,7 @@ public class JDBCmain {
 			}
 		}
 	}
-	
+
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1101,183 +1159,229 @@ public class JDBCmain {
 	/*
 	 * REPORT QUERIES
 	 */
-	public static void reportB(String postal_code, String listing_city) throws ClassNotFoundException{
+	public static void reportB() throws ClassNotFoundException{
 		Class.forName(dbClassName);
 		final String USER = "root";
 		final String PASS = "password";
-		
+
 		Connection conn = null;
 		Statement stmt = null;
-		
+
 		try {
 			conn = DriverManager.getConnection(CONNECTION,USER,PASS);
-			
+
 			try {
 				stmt = conn.createStatement();
-				
+
 				String sql = "SELECT postal_code, COUNT(*) as rowcount FROM LISTNGS_RENTED " +
-		                   "GROUP BY postal_code" ;
+						"GROUP BY postal_code";
 				ResultSet rs = stmt.executeQuery(sql);
-	            while(rs.next()){
-	            	int count = rs.getInt("rowcount");
-	            	System.out.println("There are " + count +" bookings within " + rs.getString("postal_code"));
-	            }
-	            rs.close();
-	        } catch (NumberFormatException e) {
-	            e.printStackTrace();
-	        }       
-			
+				while(rs.next()){
+					int count = rs.getInt("rowcount");
+					System.out.println("There are " + count +" bookings within " + rs.getString("postal_code"));
+				}
+				rs.close();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}       
+
 		}catch(SQLException se){
-		      se.printStackTrace();
-		   }catch(Exception e){
-		      e.printStackTrace();
-		   }finally{
-		      try{
-		         if(stmt!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		      }
-		      try{
-		         if(conn!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		         se.printStackTrace();
-		      }
-		   }
+			se.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try{
+				if(stmt!=null)
+					conn.close();
+			}catch(SQLException se){
+			}
+			try{
+				if(conn!=null)
+					conn.close();
+			}catch(SQLException se){
+				se.printStackTrace();
+			}
+		}
 	}
-	public static void reportC(String country) throws ClassNotFoundException{
+	public static void reportC() throws ClassNotFoundException{
 		Class.forName(dbClassName);
 		final String USER = "root";
 		final String PASS = "password";
-		
+
 		Connection conn = null;
 		Statement stmt = null;
-		
+
 		try {
 			conn = DriverManager.getConnection(CONNECTION,USER,PASS);
-			
+
 			try {
 				stmt = conn.createStatement();
-				
+
 				String sql = "SELECT listing_country, COUNT(*) as rowcount FROM LISTINGS " +
-		                   "GROUP BY listing_country";
+						"GROUP BY listing_country";
 				ResultSet rs = stmt.executeQuery(sql);
-	            while(rs.next()){
-	            	int count = rs.getInt("rowcount");
-		            System.out.println("There are " + count +" listings in " + rs.getString("listing_country"));
-	            }
-	            rs.close();
-	        } catch (NumberFormatException e) {
-	            e.printStackTrace();
-	        }       
-			
+				while(rs.next()){
+					int count = rs.getInt("rowcount");
+					System.out.println("There are " + count +" listings in " + rs.getString("listing_country"));
+				}
+				rs.close();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}       
+
 		}catch(SQLException se){
-		      se.printStackTrace();
-		   }catch(Exception e){
-		      e.printStackTrace();
-		   }finally{
-		      try{
-		         if(stmt!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		      }
-		      try{
-		         if(conn!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		         se.printStackTrace();
-		      }
-		   }
+			se.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try{
+				if(stmt!=null)
+					conn.close();
+			}catch(SQLException se){
+			}
+			try{
+				if(conn!=null)
+					conn.close();
+			}catch(SQLException se){
+				se.printStackTrace();
+			}
+		}
 	}
-	public static void reportD(String listing_country, String listing_city) throws ClassNotFoundException{
+	public static void reportD() throws ClassNotFoundException{
 		Class.forName(dbClassName);
 		final String USER = "root";
 		final String PASS = "password";
-		
+
 		Connection conn = null;
 		Statement stmt = null;
-		
+
 		try {
 			conn = DriverManager.getConnection(CONNECTION,USER,PASS);
-			
+
 			try {
 				stmt = conn.createStatement();
-				
-				String sql = "SELECT listing_country, listing_city, COUNT(*) as rowcount FROM LISTINGS " +
-		                   "GROUP BY LISTINGS.listing_country, LISTINGS.listing_city";
+
+				String sql = "SELECT listing_city, listing_country, COUNT(*) as rowcount FROM LISTINGS " +
+						"GROUP BY listing_city, listing_country";
 				ResultSet rs = stmt.executeQuery(sql);
-	            while(rs.next()){
-	            	int count = rs.getInt("rowcount");
-	            	System.out.println("There are " + count +" listings in " + rs.getString(listing_country) + " and " + rs.getString(listing_city));
-	            }
-	            rs.close();
-	        } catch (NumberFormatException e) {
-	            e.printStackTrace();
-	        }       
-			
+				while(rs.next()){
+					int count = rs.getInt("rowcount");
+					System.out.println("There are " + count +" listings in " + rs.getString("listing_city") + " and " + rs.getString("listing_country"));
+				}
+				rs.close();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}       
+
 		}catch(SQLException se){
-		      se.printStackTrace();
-		   }catch(Exception e){
-		      e.printStackTrace();
-		   }finally{
-		      try{
-		         if(stmt!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		      }
-		      try{
-		         if(conn!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		         se.printStackTrace();
-		      }
-		   }
+			se.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try{
+				if(stmt!=null)
+					conn.close();
+			}catch(SQLException se){
+			}
+			try{
+				if(conn!=null)
+					conn.close();
+			}catch(SQLException se){
+				se.printStackTrace();
+			}
+		}
 	}
-	public static void reportE(String listing_country, String listing_city, String postalcode) throws ClassNotFoundException{
+	public static void reportE() throws ClassNotFoundException{
 		Class.forName(dbClassName);
 		final String USER = "root";
 		final String PASS = "password";
-		
+
 		Connection conn = null;
 		Statement stmt = null;
-		
+
 		try {
 			conn = DriverManager.getConnection(CONNECTION,USER,PASS);
-			
+
 			try {
 				stmt = conn.createStatement();
-				
-				String sql = "SELECT listing_country, listing_city, postal_code, COUNT(*) as rowcount FROM LISTINGS " +
-		                   "GROUP BY listing_country AND listing_city AND postal_code";
+
+				String sql = "SELECT listing_city, listing_country, postal_code, COUNT(*) as rowcount FROM LISTINGS " +
+						"GROUP BY listing_city,listing_country,postal_code";
 				ResultSet rs = stmt.executeQuery(sql);
-	            while(rs.next()){
-	            	int count = rs.getInt("rowcount");
-		            System.out.println("There are " + count +" listings in " + 
-	            	rs.getString(listing_country) + ", " + rs.getString(listing_city) + ",and " + rs.getString(postalcode) );
-	            }
-	            rs.close();
-	        } catch (NumberFormatException e) {
-	            e.printStackTrace();
-	        }       
-			
+				while(rs.next()){
+					int count = rs.getInt("rowcount");
+					System.out.println("There are " + count +" listings in " + 
+							rs.getString("listing_city") + ", " + rs.getString("listing_country") + ",and " + rs.getString("postalcode"));
+				}
+				rs.close();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}       
+
 		}catch(SQLException se){
-		      se.printStackTrace();
-		   }catch(Exception e){
-		      e.printStackTrace();
-		   }finally{
-		      try{
-		         if(stmt!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		      }
-		      try{
-		         if(conn!=null)
-		            conn.close();
-		      }catch(SQLException se){
-		         se.printStackTrace();
-		      }
-		   }
+			se.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try{
+				if(stmt!=null)
+					conn.close();
+			}catch(SQLException se){
+			}
+			try{
+				if(conn!=null)
+					conn.close();
+			}catch(SQLException se){
+				se.printStackTrace();
+			}
+		}
 	}
+	public static void reportF() throws ClassNotFoundException{
+		Class.forName(dbClassName);
+		final String USER = "root";
+		final String PASS = "password";
+
+		Connection conn = null;
+		Statement stmt = null;
+
+		try {
+			conn = DriverManager.getConnection(CONNECTION,USER,PASS);
+
+			try {
+				stmt = conn.createStatement();
+
+				String sql = "SELECT listing_country, name, COUNT(*) as rowcount FROM LISTINGS_LISTED " +
+						"GROUP BY listing_country ORDER BY rowcount";
+				ResultSet rs = stmt.executeQuery(sql);
+				while(rs.next()){
+					int count = rs.getInt("rowcount");
+					System.out.println(rs.getString("name") +" has " + count +" overall in " + 
+							rs.getString("listing_country"));
+				}
+				rs.close();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			}       
+
+		}catch(SQLException se){
+			se.printStackTrace();
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			try{
+				if(stmt!=null)
+					conn.close();
+			}catch(SQLException se){
+			}
+			try{
+				if(conn!=null)
+					conn.close();
+			}catch(SQLException se){
+				se.printStackTrace();
+			}
+		}
+	}
+
 }
 
 
