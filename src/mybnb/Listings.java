@@ -2,9 +2,11 @@ package mybnb;
 
 public class Listings {
 	String type;
-	double latitude;
-	double longitude;
+	float latitude;
+	float longitude;
 	String listing_address;
+	String listing_city;
+	String listing_country;
 	String amenities;
 	double rental_price;
 	String postal_code;
@@ -33,19 +35,19 @@ public class Listings {
 		this.type = type;
 	}
 
-	public double getLatitude() {
+	public float getLatitude() {
 		return latitude;
 	}
 
-	public void setLatitude(double latitude2) {
+	public void setLatitude(float latitude2) {
 		this.latitude = latitude2;
 	}
 
-	public double getLongitude() {
+	public float getLongitude() {
 		return longitude;
 	}
 
-	public void setLongitude(double longitude) {
+	public void setLongitude(float longitude) {
 		this.longitude = longitude;
 	}
 
@@ -55,6 +57,22 @@ public class Listings {
 
 	public void setListing_address(String listing_address) {
 		this.listing_address = listing_address;
+	}
+	
+	public String getListing_city() {
+		return listing_city;
+	}
+
+	public void setListing_city(String listing_city) {
+		this.listing_city = listing_city;
+	}
+	
+	public String getListing_country() {
+		return listing_country;
+	}
+
+	public void setListing_country(String listing_country) {
+		this.listing_country = listing_country;
 	}
 
 	public String getAmenities() {

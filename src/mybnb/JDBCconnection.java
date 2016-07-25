@@ -50,12 +50,14 @@ public class JDBCconnection {
 		      
 		      sql = "CREATE TABLE LISTINGS " +
 	                   "(type VARCHAR(255), " + 
-	                   " latitude FLOAT not null, " +
-	                   " longitude FLOAT not null, " +
+	                   " latitude DEC not null, " +
+	                   " longitude DEC not null, " +
 	                   " listing_address VARCHAR(255), " +
+	                   " listing_city VARCHAR(255), " +
+	                   " listing_country VARCHAR(255), " +
 	                   " postal_code VARCHAR(255), " +
 	                   " amenities VARCHAR(255), " +
-	                   " rental_price DOUBLE not null, " +
+	                   " rental_price DEC not null, " +
 	                   " PRIMARY KEY ( latitude, longitude ))";
 		      stmt.executeUpdate(sql);
 		      
@@ -73,6 +75,23 @@ public class JDBCconnection {
 		    		  " SELECT * FROM LISTINGS";
 		      stmt.executeUpdate(sql);
 		      
+		      sql = "LOAD DATA INFILE '" + "C://Users/Raheson/Desktop/MyBnB/users.csv" + "' into TABLE users " 
+		    		  + "FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'";
+		      stmt.executeUpdate(sql);
+		      
+		      sql = "LOAD DATA INFILE '" + "C://Users/Raheson/Desktop/MyBnB/hosts.csv" + "' into TABLE hosts " 
+				      + "FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'";
+		      stmt.executeUpdate(sql);
+			
+		      sql = "LOAD DATA INFILE '" + "C://Users/Raheson/Desktop/MyBnB/renters.csv" + "' into TABLE renters " 
+				      + "FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'";
+			  stmt.executeUpdate(sql);
+			  
+			  sql = "LOAD DATA INFILE '" + "C://Users/Raheson/Desktop/MyBnB/listings.csv" + "' into TABLE listings " 
+				      + "FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'";
+			  stmt.executeUpdate(sql);
+			  
+		      System.out.println("Loaded data into given database...");
 		      System.out.println("Created tables in given database...");
 		   }catch(SQLException se){
 		      se.printStackTrace();
